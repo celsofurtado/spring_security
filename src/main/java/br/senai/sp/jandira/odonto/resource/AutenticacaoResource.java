@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.senai.sp.jandira.odonto.resource.dto.TokenDto;
 import br.senai.sp.jandira.odonto.resource.form.FormLogin;
 import br.senai.sp.jandira.odonto.security.TokenService;;
 
@@ -27,7 +28,7 @@ public class AutenticacaoResource {
 	private TokenService tokenService;
 	
 	@PostMapping
-	public ResponseEntity<?> autenticar(@RequestBody @Valid FormLogin form){
+	public ResponseEntity<TokenDto> autenticar(@RequestBody @Valid FormLogin form){
 		
 		// Representa um username e uma senha (dados que foram enviados)
 		UsernamePasswordAuthenticationToken dadosLogin = 
@@ -38,15 +39,13 @@ public class AutenticacaoResource {
 			Authentication authentication = authManager.authenticate(dadosLogin);
 			
 			String token = tokenService.gerarToken(authentication);
-			System.out.println("TOKEN GERADO ----------> " + token);
 	
-			return ResponseEntity.ok().build();
+			return ResponseEntity.ok(new TokenDto(token, "Bearer"));
+			
 		} catch (AuthenticationException e) {
 			return ResponseEntity.badRequest().build();
 		}
-		
 	}
-
 }
 
 
